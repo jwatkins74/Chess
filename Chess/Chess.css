@@ -5,13 +5,19 @@
     
 }
 .a, .b {
-    border: 3px solid black;
-    width: 50px;
-    height: 50px;
+    border: 2px solid black;
+    width: 65px;
+    height: 65px;
+    font-size: 50px;
+    text-align: center;
+    vertical-align: middle;
+    font-family: 'Courier New', Courier, monospace;
+    
+    
 }
 .a {
-    background-color: burlywood;
+    background-color: honeydew;
 }
 .b {
-    background-color: darkslategray;
+    background-color: tan;
 }
