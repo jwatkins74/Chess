@@ -1,19 +1,26 @@
-#board{
-    display: flex;
-    justify-content: center;
-    border-collapse: collapse;
-    
+* {
+    background-color: darkcyan;
+}
+#board {
+    display: fixed;
+    background-color: black;
+    transform:translateY(50%);
+    transform:translateY(260px);
+
 }
 .a, .b {
-    border: 2px solid black;
+    border: 1px solid black;
     width: 65px;
     height: 65px;
     font-size: 50px;
     text-align: center;
     vertical-align: middle;
     font-family: 'Courier New', Courier, monospace;
+    user-select: none;
     
-    
+}
+.a:hover,.b:hover {
+    background-color: aqua;
 }
 .a {
     background-color: honeydew;
