@@ -94,7 +94,68 @@ board.addEventListener("click", function(event) {
             }
         }
         if ( text =="♖") {
+            //up
+            let curr = id
+            while (curr[0] < 8) {
+                curr = (Number(curr[0]) +1) + curr[1];
+                new1 = document.getElementById(curr);
+                if ( new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                        new1.style.backgroundColor = "green";
+                        continue;
+                    }
+                else if (arrayblack.includes(new1.textContent)) {
+                    new1.style.backgroundColor = "green";
+                    
+                } 
+                break;
+            }
+            //down
+            curr = id
+            while (curr[0] > 1) {
+                curr = (Number(curr[0]) -1) + curr[1];
+                new1 = document.getElementById(curr);
+                if ( new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                        new1.style.backgroundColor = "green";
+                        continue;
+                    }
+                else if (arrayblack.includes(new1.textContent)) {
+                    new1.style.backgroundColor = "green";
+                    
+                } 
+                break;
+            }
+            //right
+            curr = id
+            
+            while (curr[1] < "h") {
+                curr = curr[0] + String.fromCharCode(curr[1].charCodeAt(0)+1);
+                new1 = document.getElementById(curr);
 
+                if (new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                    new1.style.backgroundColor = "green";
+                    continue;
+                }
+                else if (arrayblack.includes(new1.textContent)) {
+                    new1.style.backgroundColor = "green";
+                } 
+                break;
+            }
+            //right
+            curr = id
+            
+            while (curr[1] > "a") {
+                curr = curr[0] + String.fromCharCode(curr[1].charCodeAt(0)-1);
+                new1 = document.getElementById(curr);
+
+                if (new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                    new1.style.backgroundColor = "green";
+                    continue;
+                }
+                else if (arrayblack.includes(new1.textContent)) {
+                    new1.style.backgroundColor = "green";
+                } 
+                break;
+            }
         }
         if ( text =="♘") {
 
@@ -112,7 +173,37 @@ board.addEventListener("click", function(event) {
 
         //Black
         if (text == "♟") {
+            if (id[0] == 7) {
+                new1 = document.getElementById("6" + id[1])
+                if ( new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                    new1.style.backgroundColor = "green";
+                    new1 = document.getElementById("5" + id[1]);
+                    if ( new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                        new1.style.backgroundColor = "green";
+                    }
+                }
+            } else {
+                new1 = document.getElementById((Number(id[0]) -1) + id[1])
+                if ( new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                    new1.style.backgroundColor = "green";
+                }
+            }
 
+            //side attacks
+            if (id[1] != "a"){
+                new1 = document.getElementById((Number(id[0]) -1) + String.fromCharCode(id[1].charCodeAt(0)-1));
+                piece = new1.textContent;
+                if (arraywhite.includes(piece)) {
+                    new1.style.backgroundColor = "green";
+                }
+            }
+            if (id[1] != "h"){
+                new1 = document.getElementById((Number(id[0]) -1) + String.fromCharCode(id[1].charCodeAt(0)+1));
+                piece = new1.textContent;
+                if (arraywhite.includes(piece)) {
+                    new1.style.backgroundColor = "green";
+                }
+            }
         }
         if (text == "♜") {
             
