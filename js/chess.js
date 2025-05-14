@@ -159,7 +159,55 @@ board.addEventListener("click", function(event) {
             }
         }
         if ( text =="♘") {
+            for (let i = -2; i < 3; i++) {
+                if (i==0){
+                    continue;
+                }
+                if (i > 1 || i < -1) {
+                    let curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)+1);
+                    new1 = document.getElementById(curr);
+                    if (new1) {
+                        if (new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                            new1.style.backgroundColor = "darkseagreen";
+                        }
+                        else if (arrayblack.includes(new1.textContent)) {
+                            new1.style.backgroundColor = "lightcoral";
+                        }
+                    }
+                    curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)-1);
+                    new1 = document.getElementById(curr);
+                    if (new1) {
+                        if (new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                            new1.style.backgroundColor = "darkseagreen";
+                        }
+                        else if (arrayblack.includes(new1.textContent)) {
+                            new1.style.backgroundColor = "lightcoral";
+                        }
+                    }
+                } else {
+                    let curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)+2);
+                    new1 = document.getElementById(curr);
+                    if (new1) {
+                        if (new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                            new1.style.backgroundColor = "darkseagreen";
+                        }
+                        else if (arrayblack.includes(new1.textContent)) {
+                            new1.style.backgroundColor = "lightcoral";
+                        }
+                    }
+                    curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)-2);
+                    new1 = document.getElementById(curr);
+                    if (new1) {
+                        if (new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                            new1.style.backgroundColor = "darkseagreen";
+                        }
+                        else if (arrayblack.includes(new1.textContent)) {
+                            new1.style.backgroundColor = "lightcoral";
+                        }
+                    }
+                }
 
+            }
         }
         if ( text =="♗") {
              //upleft
@@ -474,7 +522,55 @@ board.addEventListener("click", function(event) {
             
         
         if (text == "♞") {
-            
+            for (let i = -2; i < 3; i++) {
+                if (i==0){
+                    continue;
+                }
+                if (i > 1 || i < -1) {
+                    let curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)+1);
+                    new1 = document.getElementById(curr);
+                    if (new1) {
+                        if (new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                            new1.style.backgroundColor = "darkseagreen";
+                        }
+                        else if (arraywhite.includes(new1.textContent)) {
+                            new1.style.backgroundColor = "lightcoral";
+                        }
+                    }
+                    curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)-1);
+                    new1 = document.getElementById(curr);
+                    if (new1) {
+                        if (new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                            new1.style.backgroundColor = "darkseagreen";
+                        }
+                        else if (arraywhite.includes(new1.textContent)) {
+                            new1.style.backgroundColor = "lightcoral";
+                        }
+                    }
+                } else {
+                    let curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)+2);
+                    new1 = document.getElementById(curr);
+                    if (new1) {
+                        if (new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                            new1.style.backgroundColor = "darkseagreen";
+                        }
+                        else if (arraywhite.includes(new1.textContent)) {
+                            new1.style.backgroundColor = "lightcoral";
+                        }
+                    }
+                    curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)-2);
+                    new1 = document.getElementById(curr);
+                    if (new1) {
+                        if (new1.textContent == null|| new1.textContent.length == undefined || new1.textContent.length ==0) {
+                            new1.style.backgroundColor = "darkseagreen";
+                        }
+                        else if (arraywhite.includes(new1.textContent)) {
+                            new1.style.backgroundColor = "lightcoral";
+                        }
+                    }
+                }
+
+            }
         }
         if (text == "♝") {
              //upleft
