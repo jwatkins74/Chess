@@ -1,6 +1,16 @@
+//Notes:
 // Later, we could implement Monte Carlo for robot logic, but that's WAY in the future
-// For future note: consider object-oriented approach
+// For future note: consider object-oriented approach booo
+//------------------------------------------------------------------------------------------------------------------
+//Includes const values 
+const arraywhite = ["♙", "♖","♘","♗","♕","♔"];
+const arrayblack = ["♟", "♜","♞","♝","♛","♚"];
 
+const enemyColor = "lightcoral"
+const emptyColor = "darkseagreen"
+const clickColor = "chocolate"
+//------------------------------------------------------------------------------------------------------------------
+//Player
 let userName = "xXN00BSL4Y3RXx";
 console.log(userName);
 
@@ -11,51 +21,27 @@ msgDisplay.textContent = playerTurnMsg;
 console.log(msgDisplay)
 console.log(playerTurnMsg);
 
-
-//Changes tiles back to their orig color after making move/deselecting piece
-const func ={
-removeGreenRed() {
-    const letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
-    for (let i = 0; i < letters.length; i++) {
-        for (let ii = 1; ii < 9;ii++){
-            const curr = document.getElementById(ii + letters[i])
-            if (curr.style.backgroundColor == "darkseagreen" ||curr.style.backgroundColor == "lightcoral" ||curr.style.backgroundColor == "chocolate" ) {
-                if (curr.className == "a") {
-                    curr.style.backgroundColor = "honeydew";
-                } else {
-                    curr.style.backgroundColor = "tan";
-                }
-            }
-        }
-    }
-}
-};
-
-function isDeselected(spot) {
-    return spot.style.backgroundColor == "darkseagreen" || spot.style.backgroundColor == "lightcoral";
-}
+//-------------------------------------------------------------------------------------------------------------------
+//Board Stuff
 
 const board = document.getElementById("board")
 //Use to check who "owns" a piece
-const arraywhite = ["♙", "♖","♘","♗","♕","♔"];
-const arrayblack = ["♟", "♜","♞","♝","♛","♚"]
+
 
 let gameOver = false
 
 //Takes care of allllll the clicking action
 let place;
 board.addEventListener("click", function(event) {
-    //If we select board instead of tile, do nothing
-    if (event.target == board) {
+    //If we select board instead of tile, or game is over, do nothing
+    if (event.target == board || gameOver) {
         return;
     }
-    //Don't register additional clicks after gameOver
-    if (gameOver) {
-        return;
-    }
+    
+    
     //If we click a spot that was a valid move, move the piece
-    // if (event.target.style.backgroundColor == "darkseagreen" || event.target.style.backgroundColor =="lightcoral") {
-    if (isDeselected(event.target)) {
+    // if (event.target.style.backgroundColor == emptyColor || event.target.style.backgroundColor ==enemyColor) {
+    if (avaliableMove(event.target)) {
 
         //TODO: Handle Pawn Promoting 
         if (event.target.textContent == "♙" && event.target.id[0] =="8"){
@@ -69,7 +55,7 @@ board.addEventListener("click", function(event) {
         let oldpiece = event.target.textContent
         event.target.textContent = place.textContent
         place.textContent = ""
-        func.removeGreenRed()
+        revertColors()
 
         //Check checkmate
         if (oldpiece == "♔"){
@@ -82,35 +68,45 @@ board.addEventListener("click", function(event) {
         return;
     }
 
-    func.removeGreenRed()
+    revertColors()
     place = event.target;
-    let id = event.target.id;
-    let selectedPiece = place.textContent;
     let possibleMove;
     let piece;
 
     //If we select a piece, we want to highlight moves
-
-    //This needs to be moved to a highlightMoves() function
+    highlightMoves(event.target);
+    });
+//-------------------------------------------------------------------------------------------------------------------
+//Functions
+/**
+ * This determines the piece - sends directions to allDirections()
+ * @param {*} spot The current location of the piece
+ */
+function highlightMoves(spot) {
+    if (!spot) {
+        return;
+    }
+    let id = spot.id;
+    let selectedPiece = spot.textContent;
     if (selectedPiece != ""){
-        place.style.backgroundColor = "chocolate";
+        place.style.backgroundColor = clickColor;
 
         //White
         if ( selectedPiece =="♙") {
             //forward moves
             if (id[0] == 2) {
                 possibleMove = document.getElementById("3" + id[1])
-                if (possibleMove.textContent.length ==0) {
-                    possibleMove.style.backgroundColor = "darkseagreen";
+                if (empty(possibleMove)) {
+                    colorMove(possibleMove, "white")
                     possibleMove = document.getElementById("4" + id[1]);
-                    if (possibleMove.textContent.length ==0) {
-                        possibleMove.style.backgroundColor = "darkseagreen";
+                    if (empty(possibleMove)) {
+                        colorMove(possibleMove, "white")
                     }
                 }
             } else {
                 possibleMove = document.getElementById((Number(id[0]) +1) + id[1])
-                if (possibleMove.textContent.length ==0) {
-                    possibleMove.style.backgroundColor = "darkseagreen";
+                if (empty(possibleMove)) {
+                    colorMove(possibleMove, "white")
                 }
             }
 
@@ -119,48 +115,19 @@ board.addEventListener("click", function(event) {
                 possibleMove = document.getElementById((Number(id[0]) +1) + String.fromCharCode(id[1].charCodeAt(0)-1));
                 piece = possibleMove.textContent;
                 if (arrayblack.includes(piece)) {
-                    possibleMove.style.backgroundColor = "lightcoral";
+                    possibleMove.style.backgroundColor = enemyColor;
                 }
             }
             if (id[1] != "h"){
                 possibleMove = document.getElementById((Number(id[0]) +1) + String.fromCharCode(id[1].charCodeAt(0)+1));
                 piece = possibleMove.textContent;
                 if (arrayblack.includes(piece)) {
-                    possibleMove.style.backgroundColor = "lightcoral";
+                    possibleMove.style.backgroundColor = enemyColor;
                 }
             }
         }
         if ( selectedPiece =="♖") {
-            //up
-            let curr = id
-            while (curr[0] < 8) {
-                curr = (Number(curr[0]) +1) + curr[1];
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //down
-            curr = id
-            while (curr[0] > 1) {
-                curr = (Number(curr[0]) -1) + curr[1];
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[1] < "h") {
-                curr = curr[0] + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[1] > "a") {
-                curr = curr[0] + String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
+            allDirections(id, "white", [[1,0],[-1,0],[0,1],[0,-1]], false);
         }
         if ( selectedPiece =="♘") {
             for (let i = -2; i < 3; i++) {
@@ -188,111 +155,13 @@ board.addEventListener("click", function(event) {
             }
         }
         if ( selectedPiece =="♗") {
-             //upleft
-            let curr = id
-            while (curr[0] < 8 && curr[1] > "a") {
-                curr = (Number(curr[0]) +1)+ String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //down
-            curr = id
-            while (curr[0] < 8 && curr[1] < "h") {
-                curr = (Number(curr[0]) +1) + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[0] > 1 && curr[1] > "a") {
-                curr = (Number(curr[0]) -1) + String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[0] > 1 && curr[1] < "h") {
-                curr = (Number(curr[0]) -1) + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
+            allDirections(id, "white", [[1,1],[-1,1],[1,-1],[-1,-1]], false);
         }
         if ( selectedPiece =="♕") {
-             //up
-            let curr = id
-            while (curr[0] < 8) {
-                curr = (Number(curr[0]) +1) + curr[1];
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //down
-            curr = id
-            while (curr[0] > 1) {
-                curr = (Number(curr[0]) -1) + curr[1];
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[1] < "h") {
-                curr = curr[0] + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[1] > "a") {
-                curr = curr[0] + String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-             //upleft
-            curr = id
-            while (curr[0] < 8 && curr[1] > "a") {
-                curr = (Number(curr[0]) +1)+ String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //down
-            curr = id
-            while (curr[0] < 8 && curr[1] < "h") {
-                curr = (Number(curr[0]) +1) + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[0] > 1 && curr[1] > "a") {
-                curr = (Number(curr[0]) -1) + String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[0] > 1 && curr[1] < "h") {
-                curr = (Number(curr[0]) -1) + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'white')) break;
-            }
+            allDirections(id, "white", [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]], false);
         }
         if ( selectedPiece =="♔") {
-            for (let i =-1; i < 2;i++) {
-                for (let ii = -1; ii < 2; ii++) {
-                    if (i == 0 && ii ==0) {
-                        continue;
-                    }
-                    let curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)+ii);
-                    possibleMove = document.getElementById(curr);
-                    if (!colorMove(possibleMove, 'white')) break;
-                    //FIXME: Bug where the white king cannot move up unless the top left space is free
-                }
-            }
+            allDirections(id, "white", [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]], true);
         }
 
 
@@ -300,17 +169,17 @@ board.addEventListener("click", function(event) {
         if (selectedPiece == "♟") {
             if (id[0] == 7) {
                 possibleMove = document.getElementById("6" + id[1])
-                if (possibleMove.textContent.length ==0) {
-                    possibleMove.style.backgroundColor = "darkseagreen";
+                if (empty(possibleMove)) {
+                    possibleMove.style.backgroundColor = emptyColor;
                     possibleMove = document.getElementById("5" + id[1]);
-                    if (possibleMove.textContent.length ==0) {
-                        possibleMove.style.backgroundColor = "darkseagreen";
+                    if (empty(possibleMove)) {
+                        possibleMove.style.backgroundColor = emptyColor;
                     }
                 }
             } else {
                 possibleMove = document.getElementById((Number(id[0]) -1) + id[1])
-                if (possibleMove.textContent.length ==0) {
-                    possibleMove.style.backgroundColor = "darkseagreen";
+                if (empty(possibleMove)) {
+                    possibleMove.style.backgroundColor = emptyColor;
                 }
             }
 
@@ -319,48 +188,19 @@ board.addEventListener("click", function(event) {
                 possibleMove = document.getElementById((Number(id[0]) -1) + String.fromCharCode(id[1].charCodeAt(0)-1));
                 piece = possibleMove.textContent;
                 if (arraywhite.includes(piece)) {
-                    possibleMove.style.backgroundColor = "lightcoral";
+                    possibleMove.style.backgroundColor = enemyColor;
                 }
             }
             if (id[1] != "h"){
                 possibleMove = document.getElementById((Number(id[0]) -1) + String.fromCharCode(id[1].charCodeAt(0)+1));
                 piece = possibleMove.textContent;
                 if (arraywhite.includes(piece)) {
-                    possibleMove.style.backgroundColor = "lightcoral";
+                    possibleMove.style.backgroundColor = enemyColor;
                 }
             }
         }
         if (selectedPiece == "♜") {
-            //up
-            let curr = id
-            while (curr[0] < 8) {
-                curr = (Number(curr[0]) +1) + curr[1];
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //down
-            curr = id
-            while (curr[0] > 1) {
-                curr = (Number(curr[0]) -1) + curr[1];
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[1] < "h") {
-                curr = curr[0] + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[1] > "a") {
-                curr = curr[0] + String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
+            allDirections(id, "black", [[1,0],[-1,0],[0,1],[0,-1]], false);
         }
         if (selectedPiece == "♞") {
             for (let i = -2; i < 3; i++) {
@@ -388,118 +228,45 @@ board.addEventListener("click", function(event) {
             }
         }
         if (selectedPiece == "♝") {
-             //upleft
-            let curr = id
-            while (curr[0] < 8 && curr[1] > "a") {
-                curr = (Number(curr[0]) +1)+ String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //down
-            curr = id
-            while (curr[0] < 8 && curr[1] < "h") {
-                curr = (Number(curr[0]) +1) + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[0] > 1 && curr[1] > "a") {
-                curr = (Number(curr[0]) -1) + String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[0] > 1 && curr[1] < "h") {
-                curr = (Number(curr[0]) -1) + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
+            allDirections(id, "black", [[1,1],[-1,1],[1,-1],[-1,-1]], false);
         }
         if (selectedPiece == "♛") {
-             //up
-            let curr = id
-            while (curr[0] < 8) {
-                curr = (Number(curr[0]) +1) + curr[1];
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //down
-            curr = id
-            while (curr[0] > 1) {
-                curr = (Number(curr[0]) -1) + curr[1];
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[1] < "h") {
-                curr = curr[0] + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[1] > "a") {
-                curr = curr[0] + String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-             //upleft
-            curr = id
-            while (curr[0] < 8 && curr[1] > "a") {
-                curr = (Number(curr[0]) +1)+ String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //down
-            curr = id
-            while (curr[0] < 8 && curr[1] < "h") {
-                curr = (Number(curr[0]) +1) + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[0] > 1 && curr[1] > "a") {
-                curr = (Number(curr[0]) -1) + String.fromCharCode(curr[1].charCodeAt(0)-1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
-            //right
-            curr = id
-            
-            while (curr[0] > 1 && curr[1] < "h") {
-                curr = (Number(curr[0]) -1) + String.fromCharCode(curr[1].charCodeAt(0)+1);
-                possibleMove = document.getElementById(curr);
-                if (!colorMove(possibleMove, 'black')) break;
-            }
+            allDirections(id, "black", [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]], false);
         }
         if (selectedPiece == "♚") {
-            for (let i =-1; i < 2;i++) {
-                for (let ii = -1; ii < 2; ii++) {
-                    if (i == 0 && ii ==0) {
-                        continue;
-                    }
-                    let curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)+ii);
-                    possibleMove = document.getElementById(curr);
-                    colorMove(possibleMove, 'black');
-
-
-                }
-            }
+            allDirections(id, "black", [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]], true);
         }
-
     }
     
-});
+}
+/**
+ * This uses colorMove to highlight all tiles for a piece given its directions, doesnt work for knight or pawn 
+ * @param {string} spot The current location of the piece
+ * @param {string} team The team of the chessboard TODO: We can just have black passed in depending on the piece instead of manual input
+ * @param {number[][]} directions The Directions,[move1:[vertical,horizontal],move2...[]] ex: [[0,1],[-1,1]] -> piece can only move right and down-right 
+ * @param {boolean} slow - tue means piece can only move one in the direction
+ */
+function allDirections(spot, team, directions, slow) {
+    if (!spot) {
+        return;
+    }
+    for (let i = 0; i < directions.length; i++) {
+        let vertDirection = directions[i][0];
+        let horDirection = directions[i][1];
+        let nextPost = (Number(spot[0]) + vertDirection)+ String.fromCharCode(spot[1].charCodeAt(0)+horDirection);
+        let nextEle = document.getElementById(nextPost);
+        if (slow) {
+            colorMove(nextEle, team);
+            
+        } else {
+            while (colorMove(nextEle, team)) {
+                nextPost = (Number(nextPost[0]) + vertDirection)+ String.fromCharCode(nextPost[1].charCodeAt(0)+horDirection);
+                nextEle = document.getElementById(nextPost);
+            } 
+        }
+    }
+    
+}
 
 /**
  * This colors all possible moves for a piece after clicking on it.
@@ -512,15 +279,46 @@ function colorMove(spot, team) {
     if (!spot) {
         return false;
     }
-    if (spot.textContent.length ==0) { // TODO: Really PLEASE replace with a function for readibility
-        spot.style.backgroundColor = "darkseagreen";
+    if (empty(spot)) { // TODO: Really PLEASE replace with a function for readibility
+        spot.style.backgroundColor = emptyColor;
         return true;
     }
     else if (team == "black" && arraywhite.includes(spot.textContent)) {
-        spot.style.backgroundColor = "lightcoral";
+        spot.style.backgroundColor = enemyColor;
     }
     else if (team == "white" && arrayblack.includes(spot.textContent)) {
-        spot.style.backgroundColor = "lightcoral";
+        spot.style.backgroundColor = enemyColor;
     }
     return false;
+}
+/**
+ * This changes back the color of all tiles
+ */
+function revertColors() {
+    const letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+    for (let i = 0; i < letters.length; i++) {
+        for (let ii = 1; ii < 9;ii++){
+            const curr = document.getElementById(ii + letters[i])
+            if (curr.style.backgroundColor == emptyColor ||curr.style.backgroundColor == enemyColor ||curr.style.backgroundColor == clickColor ) {
+                if (curr.className == "a") {
+                    curr.style.backgroundColor = "honeydew";
+                } else {
+                    curr.style.backgroundColor = "tan";
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Checks if tile is empty
+ * @param {*} spot The current place on the board we're checking
+ * @returns True if spot is empty, false else.
+ */
+function empty(spot) {
+    return spot.textContent.length == 0;
+}
+
+function avaliableMove(spot) {
+    return spot.style.backgroundColor == emptyColor || spot.style.backgroundColor == enemyColor;
 }
