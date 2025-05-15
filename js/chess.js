@@ -1,14 +1,29 @@
-//Notes:
-// Later, we could implement Monte Carlo for robot logic, but that's WAY in the future
-// For future note: consider object-oriented approach booo
+/*
+Notes:
+Later, we could implement Monte Carlo for robot logic, but that's WAY in the future
+For future note: consider object-oriented approach booo
+
+Thigns to fix/add:
+-Centering board
+-Add whos turn it is and only let that color move
+-Pawn Promotions
+-Mine Map? Idk if we should have an extra grid for the bombs, as trying to put the minesweeper bombs on the same grid is eww
+
+*/
 //------------------------------------------------------------------------------------------------------------------
 //Includes const values 
 const arraywhite = ["♙", "♖","♘","♗","♕","♔"];
 const arrayblack = ["♟", "♜","♞","♝","♛","♚"];
 
-const enemyColor = "lightcoral"
-const emptyColor = "darkseagreen"
-const clickColor = "chocolate"
+const enemyColor = "lightcoral";   // color of tiles where moves do kill
+const emptyColor = "darkseagreen"; // color of tiles where moves don't kill
+const clickColor = "chocolate";    // clicked tile color
+const aColor     = "honeydew";     // A tile colors
+const bColor     = "tan";          // B tile colors
+
+const mineProb = 0.2;              //Prob of mine, each center tile
+const mineVis = true;              //For us to test
+const mineColor = "red";           //vis mine color
 //------------------------------------------------------------------------------------------------------------------
 //Player
 let userName = "xXN00BSL4Y3RXx";
@@ -20,7 +35,23 @@ const playerTurnMsg = `Your turn, ${userName}.`;
 msgDisplay.textContent = playerTurnMsg;
 console.log(msgDisplay)
 console.log(playerTurnMsg);
-
+//-------------------------------------------------------------------------------------------------------------------
+//Mines
+//j is vertical
+let bombs = [];
+for (let j = 3; j < 7; j++) {
+    for (let k = 0; k < 8; k++) {
+        if (Math.random() < mineProb) {
+            let s = j + String.fromCharCode("a".charCodeAt(0)+k);
+            if (mineVis) {
+                const bomb = document.getElementById(s);
+                bomb.style.backgroundColor = mineColor;
+            }
+            
+            bombs.push(s)
+        }
+    }
+}
 //-------------------------------------------------------------------------------------------------------------------
 //Board Stuff
 
@@ -39,7 +70,7 @@ board.addEventListener("click", function(event) {
     }
     
     
-    //If we click a spot that was a valid move, move the piece
+    //If we click a spot that was a valid move, move the piece (bombs)
     // if (event.target.style.backgroundColor == emptyColor || event.target.style.backgroundColor ==enemyColor) {
     if (avaliableMove(event.target)) {
 
@@ -50,12 +81,19 @@ board.addEventListener("click", function(event) {
         if (event.target.textContent == "♟" && event.target.id[0] =="1"){
 
         }
-
+        if (bombs.includes(event.target.id)){
+            place.textContent = "";
+            let index = bombs.findIndex(spot => mine(spot, event.target.id));
+            bombs.splice(index, 1);
+            revertColors();
+            return
+        }
         //Sets new tile character to move piece and remove the old piece
         let oldpiece = event.target.textContent
         event.target.textContent = place.textContent
         place.textContent = ""
         revertColors()
+
 
         //Check checkmate
         if (oldpiece == "♔"){
@@ -300,10 +338,12 @@ function revertColors() {
         for (let ii = 1; ii < 9;ii++){
             const curr = document.getElementById(ii + letters[i])
             if (curr.style.backgroundColor == emptyColor ||curr.style.backgroundColor == enemyColor ||curr.style.backgroundColor == clickColor ) {
-                if (curr.className == "a") {
-                    curr.style.backgroundColor = "honeydew";
+                if (mineVis && bombs.includes(curr.id)) {
+                    curr.style.backgroundColor = mineColor;
+                }else if (curr.className == "a") {
+                    curr.style.backgroundColor = aColor;
                 } else {
-                    curr.style.backgroundColor = "tan";
+                    curr.style.backgroundColor = bColor;
                 }
             }
         }
@@ -321,4 +361,11 @@ function empty(spot) {
 
 function avaliableMove(spot) {
     return spot.style.backgroundColor == emptyColor || spot.style.backgroundColor == enemyColor;
+}
+/**
+ * 
+ * @param {*} spot 
+ */
+function mine(spot, target) {
+    return spot == target;
 }
