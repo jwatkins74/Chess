@@ -2,10 +2,9 @@
     background-color: darkcyan;
 }
 #board {
-    display: fixed;
+    
     background-color: black;
-    transform:translateY(50%);
-    transform:translateY(260px);
+    
 
 }
 .a, .b {

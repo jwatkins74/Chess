@@ -5,9 +5,10 @@ For future note: consider object-oriented approach booo
 
 Thigns to fix/add:
 -Centering board
--Add whos turn it is and only let that color move
+-Add whos turn it as a viewable element
 -Pawn Promotions
--Mine Map? Idk if we should have an extra grid for the bombs, as trying to put the minesweeper bombs on the same grid is eww
+-Mine Map? Idk if we should have an extra grid for the bombs, as trying to put the minesweeper numbers on the same grid is eww
+-Future- Add one player (Ai will be hard to make)
 
 */
 //------------------------------------------------------------------------------------------------------------------
@@ -22,7 +23,7 @@ const aColor     = "honeydew";     // A tile colors
 const bColor     = "tan";          // B tile colors
 
 const mineProb = 0.2;              //Prob of mine, each center tile
-const mineVis = true;              //For us to test
+const mineVis = false;              //For us to test
 const mineColor = "red";           //vis mine color
 //------------------------------------------------------------------------------------------------------------------
 //Player
@@ -35,6 +36,8 @@ const playerTurnMsg = `Your turn, ${userName}.`;
 msgDisplay.textContent = playerTurnMsg;
 console.log(msgDisplay)
 console.log(playerTurnMsg);
+
+let turn = "white";
 //-------------------------------------------------------------------------------------------------------------------
 //Mines
 //j is vertical
@@ -62,7 +65,7 @@ const board = document.getElementById("board")
 let gameOver = false
 
 //Takes care of allllll the clicking action
-let place;
+let oldSelected;
 board.addEventListener("click", function(event) {
     //If we select board instead of tile, or game is over, do nothing
     if (event.target == board || gameOver) {
@@ -73,7 +76,10 @@ board.addEventListener("click", function(event) {
     //If we click a spot that was a valid move, move the piece (bombs)
     // if (event.target.style.backgroundColor == emptyColor || event.target.style.backgroundColor ==enemyColor) {
     if (avaliableMove(event.target)) {
-
+        if (!turnflag(oldSelected.textContent)) {
+            alert("It is " + turn + "'s turn!" );
+            return;
+        }
         //TODO: Handle Pawn Promoting 
         if (event.target.textContent == "♙" && event.target.id[0] =="8"){
             
@@ -81,8 +87,17 @@ board.addEventListener("click", function(event) {
         if (event.target.textContent == "♟" && event.target.id[0] =="1"){
 
         }
+        //This means we are good to swap!
+
+        //swap turn
+        if (turn == "white") {
+            turn = "black";
+        } else {
+            turn = "white";
+        }
+        //Blow up if goes to mine
         if (bombs.includes(event.target.id)){
-            place.textContent = "";
+            oldSelected.textContent = "";
             let index = bombs.findIndex(spot => mine(spot, event.target.id));
             bombs.splice(index, 1);
             revertColors();
@@ -90,8 +105,8 @@ board.addEventListener("click", function(event) {
         }
         //Sets new tile character to move piece and remove the old piece
         let oldpiece = event.target.textContent
-        event.target.textContent = place.textContent
-        place.textContent = ""
+        event.target.textContent = oldSelected.textContent
+        oldSelected.textContent = ""
         revertColors()
 
 
@@ -107,7 +122,7 @@ board.addEventListener("click", function(event) {
     }
 
     revertColors()
-    place = event.target;
+    oldSelected = event.target;
     let possibleMove;
     let piece;
 
@@ -127,7 +142,7 @@ function highlightMoves(spot) {
     let id = spot.id;
     let selectedPiece = spot.textContent;
     if (selectedPiece != ""){
-        place.style.backgroundColor = clickColor;
+        oldSelected.style.backgroundColor = clickColor;
 
         //White
         if ( selectedPiece =="♙") {
@@ -363,9 +378,24 @@ function avaliableMove(spot) {
     return spot.style.backgroundColor == emptyColor || spot.style.backgroundColor == enemyColor;
 }
 /**
- * 
- * @param {*} spot 
+ * Function needed to check where an array holds the value target
+ * @param {*} spot The array input
+ * @param {*} target The target
+ * @returns If the target is found
  */
 function mine(spot, target) {
     return spot == target;
+}
+/**
+ * Function to check if piece can be moved, based on turn order
+ * @param {*} piece Piece to be moved
+ * @returns If move is valid.
+ */
+function turnflag(piece) {
+    if (turn == "white" && arraywhite.includes(piece)) {
+        return true;
+    }else if (turn == "black" && arrayblack.includes(piece)) {
+        return true;
+    }
+    return false;
 }
