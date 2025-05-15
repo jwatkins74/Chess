@@ -10,13 +10,15 @@ msgDisplay.textContent = playerTurnMsg;
 console.log(msgDisplay)
 console.log(playerTurnMsg);
 
+
+//Changes tiles back to their orig color after making move/deselecting piece
 const func ={
 removeGreenRed() {
     const letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
     for (let i = 0; i < letters.length; i++) {
         for (let ii = 1; ii < 9;ii++){
             const curr = document.getElementById(ii + letters[i])
-            if (curr.style.backgroundColor == "darkseagreen" ||curr.style.backgroundColor == "lightcoral" ) {
+            if (curr.style.backgroundColor == "darkseagreen" ||curr.style.backgroundColor == "lightcoral" ||curr.style.backgroundColor == "chocolate" ) {
                 if (curr.className == "a") {
                     curr.style.backgroundColor = "honeydew";
                 } else {
@@ -29,33 +31,60 @@ removeGreenRed() {
 };
 
 const board = document.getElementById("board")
+//Use to check who "owns" a piece
 const arraywhite = ["♙", "♖","♘","♗","♕","♔"];
 const arrayblack = ["♟", "♜","♞","♝","♛","♚"]
 
+let over = false
+
+//Takes care of allllll the clicking action
 let place;
 board.addEventListener("click", function(event) {
+    //If we select board instead of tile, do nothing
     if (event.target == board) {
         return;
     }
-    if (place != null){
-        if (place.className == "a") {
-            place.style.backgroundColor = "honeydew";
-        } else {
-            place.style.backgroundColor = "tan";
-        }
+    //If game over, no more clicky
+    if (over) {
+        return;
     }
+    //If we click a spot that was a valid move, move the piece
     if (event.target.style.backgroundColor == "darkseagreen" ||event.target.style.backgroundColor =="lightcoral") {
+
+        //Need code for if its a pawn promoting!
+        if (event.target.textContent == "♙" && event.target.id[0] =="8"){
+            
+        }
+        if (event.target.textContent == "♟" && event.target.id[0] =="1"){
+
+        }
+
+        //Sets new tile character to move piece and remove the old piece
+        let oldpiece = event.target.textContent
         event.target.textContent = place.textContent
         place.textContent = ""
         func.removeGreenRed()
+
+        //Check checkmate
+        if (oldpiece == "♔"){
+            alert("Black Wins!!!");
+            over = true;
+        } else if (oldpiece == "♚") {
+            alert("White Wins!!!");
+            over = true;
+        }
         return;
     }
+
+
     func.removeGreenRed()
     place = event.target;
     let id = event.target.id;
     let text = place.textContent;
     let new1;
     let piece;
+
+    //If we select a piece, we want to highlight moves
     if (text != ""){
         place.style.backgroundColor = "chocolate";
 
@@ -519,8 +548,6 @@ board.addEventListener("click", function(event) {
                 break;
             }
         }
-            
-        
         if (text == "♞") {
             for (let i = -2; i < 3; i++) {
                 if (i==0){
