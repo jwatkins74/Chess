@@ -28,17 +28,10 @@ const mineVis = false;              //For us to test
 const mineColor = "red";           //vis mine color
 //------------------------------------------------------------------------------------------------------------------
 //Player
-let userName = "xXN00BSL4Y3RXx";
-console.log(userName);
-
-const msgDisplay = document.getElementById("turnMessages");
-const playerTurnMsg = `Your turn, ${userName}.`;
-
-msgDisplay.textContent = playerTurnMsg;
-console.log(msgDisplay)
-console.log(playerTurnMsg);
-
 let turn = "white";
+const msgDisplay = document.getElementById("turnMessages");
+msgDisplay.textContent = `${turn}'s turn.`;
+
 //-------------------------------------------------------------------------------------------------------------------
 //Mines
 //j is vertical
@@ -63,9 +56,7 @@ const board = document.getElementById("board")
 //Use to check who "owns" a piece
 
 
-let gameOver = false
-
-//Takes care of allllll the clicking action
+let gameOver = false;
 let oldSelected;
 board.addEventListener("click", function(event) {
     //If we select board instead of tile, or game is over, do nothing
@@ -88,6 +79,8 @@ board.addEventListener("click", function(event) {
         } else {
             turn = "white";
         }
+        msgDisplay.textContent = `${turn}'s turn.`;
+
         //Blow up if goes to mine
         if (bombs.includes(event.target.id)){
             oldSelected.textContent = "";
