@@ -13,8 +13,9 @@ Thigns to fix/add:
 */
 //------------------------------------------------------------------------------------------------------------------
 //Includes const values 
-const arraywhite = ["♙", "♖","♘","♗","♕","♔"];
-const arrayblack = ["♟", "♜","♞","♝","♛","♚"];
+const pieces = [["♙", "♟"], ["♖", "♜"], ["♘", "♞"], ["♗", "♝"], ["♕", "♛"], ["♔", "♚"]]
+const whitePieces = ["♙", "♖","♘","♗","♕","♔"];
+const blackPieces = ["♟", "♜","♞","♝","♛","♚"];
 
 const enemyColor = "lightcoral";   // color of tiles where moves do kill
 const emptyColor = "darkseagreen"; // color of tiles where moves don't kill
@@ -71,21 +72,13 @@ board.addEventListener("click", function(event) {
     if (event.target == board || gameOver) {
         return;
     }
-    
-    
+
     //If we click a spot that was a valid move, move the piece (bombs)
     // if (event.target.style.backgroundColor == emptyColor || event.target.style.backgroundColor ==enemyColor) {
     if (avaliableMove(event.target)) {
         if (!turnflag(oldSelected.textContent)) {
-            alert("It is " + turn + "'s turn!" );
+            alert(`It is ${turn}'s turn!`)
             return;
-        }
-        //TODO: Handle Pawn Promoting 
-        if (event.target.textContent == "♙" && event.target.id[0] =="8"){
-            
-        }
-        if (event.target.textContent == "♟" && event.target.id[0] =="1"){
-
         }
         //This means we are good to swap!
 
@@ -107,6 +100,14 @@ board.addEventListener("click", function(event) {
         let oldpiece = event.target.textContent
         event.target.textContent = oldSelected.textContent
         oldSelected.textContent = ""
+
+        //Handle Pawn Promotion
+        if (event.target.textContent == "♙" && event.target.id[0] == "8"){
+            event.target.textContent = promotePawn("white");
+        }
+        if (event.target.textContent == "♟" && event.target.id[0] =="1"){
+            event.target.textContent = promotePawn("black");
+        }
         revertColors()
 
 
@@ -150,16 +151,16 @@ function highlightMoves(spot) {
             if (id[0] == 2) {
                 possibleMove = document.getElementById("3" + id[1])
                 if (empty(possibleMove)) {
-                    colorMove(possibleMove, "white")
+                    colorPossibleMoves(possibleMove, "white")
                     possibleMove = document.getElementById("4" + id[1]);
                     if (empty(possibleMove)) {
-                        colorMove(possibleMove, "white")
+                        colorPossibleMoves(possibleMove, "white")
                     }
                 }
             } else {
                 possibleMove = document.getElementById((Number(id[0]) +1) + id[1])
                 if (empty(possibleMove)) {
-                    colorMove(possibleMove, "white")
+                    colorPossibleMoves(possibleMove, "white")
                 }
             }
 
@@ -167,14 +168,14 @@ function highlightMoves(spot) {
             if (id[1] != "a"){
                 possibleMove = document.getElementById((Number(id[0]) +1) + String.fromCharCode(id[1].charCodeAt(0)-1));
                 piece = possibleMove.textContent;
-                if (arrayblack.includes(piece)) {
+                if (blackPieces.includes(piece)) {
                     possibleMove.style.backgroundColor = enemyColor;
                 }
             }
             if (id[1] != "h"){
                 possibleMove = document.getElementById((Number(id[0]) +1) + String.fromCharCode(id[1].charCodeAt(0)+1));
                 piece = possibleMove.textContent;
-                if (arrayblack.includes(piece)) {
+                if (blackPieces.includes(piece)) {
                     possibleMove.style.backgroundColor = enemyColor;
                 }
             }
@@ -190,19 +191,19 @@ function highlightMoves(spot) {
                 if (i > 1 || i < -1) {
                     let curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)+1);
                     possibleMove = document.getElementById(curr);
-                    colorMove(possibleMove, 'white')
+                    colorPossibleMoves(possibleMove, 'white')
 
                     curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)-1);
                     possibleMove = document.getElementById(curr);
-                    colorMove(possibleMove, 'white')
+                    colorPossibleMoves(possibleMove, 'white')
                 } else {
                     let curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)+2);
                     possibleMove = document.getElementById(curr);
-                    colorMove(possibleMove, 'white')
+                    colorPossibleMoves(possibleMove, 'white')
 
                     curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)-2);
                     possibleMove = document.getElementById(curr);
-                    colorMove(possibleMove, 'white')
+                    colorPossibleMoves(possibleMove, 'white')
                 }
 
             }
@@ -240,14 +241,14 @@ function highlightMoves(spot) {
             if (id[1] != "a"){
                 possibleMove = document.getElementById((Number(id[0]) -1) + String.fromCharCode(id[1].charCodeAt(0)-1));
                 piece = possibleMove.textContent;
-                if (arraywhite.includes(piece)) {
+                if (whitePieces.includes(piece)) {
                     possibleMove.style.backgroundColor = enemyColor;
                 }
             }
             if (id[1] != "h"){
                 possibleMove = document.getElementById((Number(id[0]) -1) + String.fromCharCode(id[1].charCodeAt(0)+1));
                 piece = possibleMove.textContent;
-                if (arraywhite.includes(piece)) {
+                if (whitePieces.includes(piece)) {
                     possibleMove.style.backgroundColor = enemyColor;
                 }
             }
@@ -263,19 +264,19 @@ function highlightMoves(spot) {
                 if (i > 1 || i < -1) {
                     let curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)+1);
                     possibleMove = document.getElementById(curr);
-                    colorMove(possibleMove, 'black')
+                    colorPossibleMoves(possibleMove, 'black')
 
                     curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)-1);
                     possibleMove = document.getElementById(curr);
-                    colorMove(possibleMove, 'black')
+                    colorPossibleMoves(possibleMove, 'black')
                 } else {
                     let curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)+2);
                     possibleMove = document.getElementById(curr);
-                    colorMove(possibleMove, 'black')
+                    colorPossibleMoves(possibleMove, 'black')
 
                     curr = (Number(id[0]) +i) + String.fromCharCode(id[1].charCodeAt(0)-2);
                     possibleMove = document.getElementById(curr);
-                    colorMove(possibleMove, 'black')
+                    colorPossibleMoves(possibleMove, 'black')
                 }
 
             }
@@ -309,10 +310,10 @@ function allDirections(spot, team, directions, slow) {
         let nextPost = (Number(spot[0]) + vertDirection)+ String.fromCharCode(spot[1].charCodeAt(0)+horDirection);
         let nextEle = document.getElementById(nextPost);
         if (slow) {
-            colorMove(nextEle, team);
+            colorPossibleMoves(nextEle, team);
             
         } else {
-            while (colorMove(nextEle, team)) {
+            while (colorPossibleMoves(nextEle, team)) {
                 nextPost = (Number(nextPost[0]) + vertDirection)+ String.fromCharCode(nextPost[1].charCodeAt(0)+horDirection);
                 nextEle = document.getElementById(nextPost);
             } 
@@ -328,18 +329,18 @@ function allDirections(spot, team, directions, slow) {
  * @returns Whether the piece would be able to move further in that direction. If false, then the piece 
  * will continue checking further spots in that direction to see if they are valid moves.
  */
-function colorMove(spot, team) {
+function colorPossibleMoves(spot, team) {
     if (!spot) {
         return false;
     }
-    if (empty(spot)) { // TODO: Really PLEASE replace with a function for readibility
+    if (empty(spot)) {
         spot.style.backgroundColor = emptyColor;
         return true;
     }
-    else if (team == "black" && arraywhite.includes(spot.textContent)) {
+    else if (team == "black" && whitePieces.includes(spot.textContent)) {
         spot.style.backgroundColor = enemyColor;
     }
-    else if (team == "white" && arrayblack.includes(spot.textContent)) {
+    else if (team == "white" && blackPieces.includes(spot.textContent)) {
         spot.style.backgroundColor = enemyColor;
     }
     return false;
@@ -371,7 +372,7 @@ function revertColors() {
  * @returns True if spot is empty, false else.
  */
 function empty(spot) {
-    return spot.textContent.length == 0;
+    return spot.textContent.length == 0 && spot != null;
 }
 
 function avaliableMove(spot) {
@@ -392,10 +393,33 @@ function mine(spot, target) {
  * @returns If move is valid.
  */
 function turnflag(piece) {
-    if (turn == "white" && arraywhite.includes(piece)) {
+    if (turn == "white" && whitePieces.includes(piece)) {
         return true;
-    }else if (turn == "black" && arrayblack.includes(piece)) {
+    }else if (turn == "black" && blackPieces.includes(piece)) {
         return true;
     }
     return false;
+}
+/**
+ * Promotes a pawn to another piece using browser alerts
+ * TODO: Implement proper GUI later
+ * @param {*} team The team of the current pawn being replaced
+ * @returns The new piece the pawn will be replaced with.
+ */
+function promotePawn(team) {
+    if (team == "white") team = 0;
+    else team = 1;
+    let piece = "none";
+    while (!(blackPieces.includes(piece) || whitePieces.includes(piece))) {
+        let choice = prompt("What new piece would you like to select?").toLowerCase();
+        switch (choice){
+            case "pawn": return pieces[0][team];
+            case "rook": return pieces[1][team];
+            case "knight": return pieces[2][team];
+            case "bishop": return pieces[3][team];
+            case "queen": return pieces[4][team];
+            case "king": return pieces[5][team];
+            default: alert("Invalid Choice!");
+        }
+    }
 }
