@@ -5,10 +5,9 @@ For future note: consider object-oriented approach booo
 
 Thigns to fix/add:
 -Centering board
--Add whos turn it as a viewable element
 -Pawn Promotions
 -Mine Map? Idk if we should have an extra grid for the bombs, as trying to put the minesweeper numbers on the same grid is eww
--Future- Add one player (Ai will be hard to make)
+-Future- Add one player (Ai will be hard to make), Add online?
 
 */
 //------------------------------------------------------------------------------------------------------------------
@@ -50,9 +49,52 @@ for (let j = 3; j < 7; j++) {
     }
 }
 //-------------------------------------------------------------------------------------------------------------------
+let flipped = false
+let flipOn = true;
+const flipButton = document.getElementById("flip");
+flipButton.addEventListener("click", function(event) {
+    flipOn = !flipOn;
+    if (flipOn && turn == "black") {
+        flip();
+    } 
+    if (flipOn) {
+        flipButton.textContent = "Flip is on!"
+    }
+    if (!flipOn) {
+        flipButton.textContent = "Flip is off!"
+    }
+
+    });
+    /**
+ * Function to flip tiles
+ * @param {*} piece Piece to be moved
+ * @returns If move is valid.
+ */
+function flip() {
+    const letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+    for (let i = 0; i < letters.length; i++) {
+        for (let ii = 1; ii < 9;ii++){
+            const curr = document.getElementById(ii + letters[i])
+            if (flipped) {
+                curr.style.transform="rotate(0deg)";
+            } else {
+                curr.style.transform = "rotate(180deg)";
+            }
+            
+        }
+    }
+    if (flipped) {
+        board.style.transform = "rotate(0deg)";
+        flipped = false;
+    } else {
+        board.style.transform = "rotate(180deg)";
+        flipped = true;
+    }
+}
+//-------------------------------------------------------------------------------------------------------------------
 //Board Stuff
 
-const board = document.getElementById("board")
+const board = document.getElementById("board");
 //Use to check who "owns" a piece
 
 
@@ -87,6 +129,9 @@ board.addEventListener("click", function(event) {
             let index = bombs.findIndex(spot => mine(spot, event.target.id));
             bombs.splice(index, 1);
             revertColors();
+            if (flipOn) {
+                flip();
+            }
             return
         }
         //Sets new tile character to move piece and remove the old piece
@@ -108,9 +153,20 @@ board.addEventListener("click", function(event) {
         if (oldpiece == "♔"){
             alert("Black Wins!!!");
             gameOver = true;
+            if (flipped) {
+                flip();
+            }
         } else if (oldpiece == "♚") {
             alert("White Wins!!!");
             gameOver = true;
+            if (flipped) {
+                flip();
+            }
+        } else {
+            if (flipOn) {
+                flip();
+            }
+            
         }
         return;
     }
