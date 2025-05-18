@@ -24,8 +24,12 @@ const clickColor = "chocolate";    // clicked tile color
 const aColor     = "honeydew";     // A tile colors
 const bColor     = "tan";          // B tile colors
 
-const mineProb = 0.2;              //Prob of mine, each center tile
-const mineVis = true;              //For us to test
+//Prob of mine, each center tile
+let mineProb = 0.35;  
+if (localStorage.getItem("diff") >= 0){
+    mineProb = localStorage.getItem("diff") / 100;
+}
+const mineVis = false;              //For us to test
 const mineColor = "red";           //vis mine color
 //------------------------------------------------------------------------------------------------------------------
 //Player
