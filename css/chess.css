@@ -1,10 +1,12 @@
 * {
     background-color: darkcyan;
 }
-#board, #mineboard {
+
+#boardSpace{
     margin-left: auto;
     margin-right: auto;
-    
+    display: flex;
+    justify-content: center;
 }
 
 #turnMessages {
