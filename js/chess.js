@@ -101,18 +101,18 @@ let flipped = false
 let flipOn = true;
 const flipButton = document.getElementById("flip");
 flipButton.addEventListener("click", function(event) {
-    flipOn = !flipOn;
-    if (flipOn && turn == "black") {
-        flip();
-    } 
+    flipOn = !flipOn; //toggle flip feature
+
     if (flipOn) {
         flipButton.textContent = "Flip is on!"
-    }
-    if (!flipOn) {
-        flipButton.textContent = "Flip is off!"
-    }
+        if (turn == "black") flip();
+        if (turn == "white") ; //do nothing, since it's already fine
 
-    });
+    } else { //when flip is "off", toggle to initial state
+        flipButton.textContent = "Flip is off!"
+        if (flipped) flip();
+    }
+});
     /**
  * Function to flip tiles
  * @param {*} piece Piece to be moved
