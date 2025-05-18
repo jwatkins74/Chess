@@ -455,7 +455,6 @@ function revertColors() {
     for (let i = 0; i < letters.length; i++) {
         for (let ii = 1; ii < 9;ii++){
             const curr = document.getElementById(ii + letters[i])
-            if (curr.style.backgroundColor == emptyColor ||curr.style.backgroundColor == enemyColor ||curr.style.backgroundColor == clickColor ) {
                 if (mineVis && bombs.includes(curr.id)) {
                     curr.style.backgroundColor = mineColor;
                 }else if (curr.className == "a") {
@@ -463,7 +462,6 @@ function revertColors() {
                 } else {
                     curr.style.backgroundColor = bColor;
                 }
-            }
         }
     }
 }
@@ -533,20 +531,19 @@ function pieceExplosion(chessPiece) {
     var id = null;
     clearInterval(id) //stop any current animations
     timer = 0;
-    id = setInterval(explodeTile, 25); //animate the frame shaking
+    length = 50;
+    id = setInterval(explodeTile, 35); //animate the frame shaking
     function explodeTile() {
         //base case
-        if (timer == 50) {
+        if (timer == length) {
             clearInterval(id);
+            revertColors()
             
         } else {
             if (timer % 2 == 0) chessPiece.style.backgroundColor = "yellow"; 
             else chessPiece.style.backgroundColor = "red"; 
         }
         timer++;
-    } //FIXME: Tile stays secondary color after animation and doesn't revert
-    //The issue is that the animation (due to the nature of setInterval) continues after all the code is finished running, so any code that frees up the space appearance gets overridden
-    //Clearing the interval and then calling resetBoard or availableMove works, but causes animation to end instantly.
-
+    } 
     avaliableMove(chessPiece);
 }
