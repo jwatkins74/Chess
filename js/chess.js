@@ -54,10 +54,8 @@ const viewMines = document.getElementById("viewMines");
 viewMines.onmouseenter =  function(){
     calNumbers()
     mineBoard.style.display = "block";
-    board.style.display = "none";
 };
 viewMines.onmouseleave = function() {
-    board.style.display = "block";
     mineBoard.style.display = "none";
 }
 //Board Swapping
