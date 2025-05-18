@@ -178,6 +178,7 @@ board.addEventListener("click", function(event) {
 
         //Blow up if goes to mine
         if (bombs.includes(event.target.id)){
+            pieceExplosion(oldSelected);
             oldSelected.textContent = "";
             let index = bombs.findIndex(spot => mine(spot, event.target.id));
             bombs.splice(index, 1);
@@ -523,4 +524,27 @@ function promotePawn(team) {
             default: alert("Invalid Choice!");
         }
     }
+}
+
+
+// ANIMATIONS (Yes I know I should move this to a separate file)
+
+function pieceExplosion(chessPiece) {
+    var id = null;
+    clearInterval(id) //stop any current animations
+    timer = 0;
+    id = setInterval(explodeTile, 10); //animate the frame shaking
+    function explodeTile() {
+        //base case
+        if (timer == 50) {
+            clearInterval(id);
+            
+        } else {
+            if (timer % 2 == 0) chessPiece.style.backgroundColor = "yellow"; 
+            else chessPiece.style.backgroundColor = "red"; 
+        }
+        timer++;
+        
+    }
+    revertColors();
 }
