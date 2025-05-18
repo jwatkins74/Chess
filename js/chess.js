@@ -16,6 +16,8 @@ const pieces = [["♙", "♟"], ["♖", "♜"], ["♘", "♞"], ["♗", "♝"], 
 const whitePieces = ["♙", "♖","♘","♗","♕","♔"];
 const blackPieces = ["♟", "♜","♞","♝","♛","♚"];
 
+const letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+
 const enemyColor = "lightcoral";   // color of tiles where moves do kill
 const emptyColor = "darkseagreen"; // color of tiles where moves don't kill
 const clickColor = "chocolate";    // clicked tile color
@@ -23,7 +25,7 @@ const aColor     = "honeydew";     // A tile colors
 const bColor     = "tan";          // B tile colors
 
 const mineProb = 0.2;              //Prob of mine, each center tile
-const mineVis = false;              //For us to test
+const mineVis = true;              //For us to test
 const mineColor = "red";           //vis mine color
 //------------------------------------------------------------------------------------------------------------------
 //Player
@@ -43,9 +45,55 @@ for (let j = 3; j < 7; j++) {
                 const bomb = document.getElementById(s);
                 bomb.style.backgroundColor = mineColor;
             }
-            
             bombs.push(s)
         }
+    }
+}
+
+const viewMines = document.getElementById("viewMines");
+viewMines.onmouseenter =  function(){
+    calNumbers()
+    mineBoard.style.display = "block";
+    board.style.display = "none";
+};
+viewMines.onmouseleave = function() {
+    board.style.display = "block";
+    mineBoard.style.display = "none";
+}
+//Board Swapping
+const mineBoard = document.getElementById("mineboard");
+mineBoard.style.display="none";
+/**
+ * Calculates numbers for second board
+ */
+function calNumbers() {
+    for (let i = 0; i < letters.length; i++) {
+        for (let ii = 1; ii < 9;ii++){
+            const curr2 = document.getElementById(ii + letters[i])
+            if (turn == "white" && whitePieces.includes(curr2.textContent) || turn == "black" && blackPieces.includes(curr2.textContent)) {
+                const sweeper = document.getElementById("" + ii + (i + 1));
+                let num =0;
+                for (let j = -1; j < 2; j++) {
+                    for (let jj = -1; jj < 2; jj++) {
+                        if (i + j > -1 && i+j <  letters.length && ii + jj > 0 && ii+jj <  9) {
+                            if (bombs.includes((ii+ jj) + letters[i + j])) {
+                                num = num + 1;
+                            }
+                        }
+                        
+                    }
+                }
+                sweeper.textContent = num;
+            } else {
+                const sweeper = document.getElementById("" + ii + (i + 1));
+                sweeper.textContent = "";
+            }
+        }
+    }
+    if (turn == "white") {
+
+    } else {
+
     }
 }
 //-------------------------------------------------------------------------------------------------------------------
@@ -75,18 +123,23 @@ function flip() {
     for (let i = 0; i < letters.length; i++) {
         for (let ii = 1; ii < 9;ii++){
             const curr = document.getElementById(ii + letters[i])
+            const curr3 = document.getElementById(""+ ii + (i+1))
             if (flipped) {
                 curr.style.transform="rotate(0deg)";
+                curr3.style.transform="rotate(0deg)";
             } else {
                 curr.style.transform = "rotate(180deg)";
+                curr3.style.transform="rotate(180deg)";
             }
             
         }
     }
     if (flipped) {
+        mineBoard.style.transform = "rotate(0deg)";
         board.style.transform = "rotate(0deg)";
         flipped = false;
     } else {
+        mineBoard.style.transform = "rotate(180deg)";
         board.style.transform = "rotate(180deg)";
         flipped = true;
     }
@@ -398,7 +451,6 @@ function colorPossibleMoves(spot, team) {
  * This changes back the color of all tiles
  */
 function revertColors() {
-    const letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
     for (let i = 0; i < letters.length; i++) {
         for (let ii = 1; ii < 9;ii++){
             const curr = document.getElementById(ii + letters[i])
