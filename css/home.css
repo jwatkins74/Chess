@@ -56,3 +56,8 @@ img {
 #title {
     padding-bottom: 8vh;
 }
+#slide {
+    max-width: fit-content;
+    height: fit-content;
+    
+}
