@@ -178,6 +178,10 @@ board.addEventListener("click", function(event) {
 
         //Blow up if goes to mine
         if (bombs.includes(event.target.id)){
+            //If King blows up
+            if (oldSelected.textContent == pieces[5][0]) {alert("Black Wins!!!"); gameOver = true;}
+            if (oldSelected.textContent == pieces[5][1]) {alert("White Wins!!!"); gameOver = true;}
+
             oldSelected.textContent = "";
             let index = bombs.findIndex(spot => mine(spot, event.target.id));
             bombs.splice(index, 1);
