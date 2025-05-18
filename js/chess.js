@@ -533,7 +533,7 @@ function pieceExplosion(chessPiece) {
     var id = null;
     clearInterval(id) //stop any current animations
     timer = 0;
-    id = setInterval(explodeTile, 10); //animate the frame shaking
+    id = setInterval(explodeTile, 25); //animate the frame shaking
     function explodeTile() {
         //base case
         if (timer == 50) {
@@ -544,7 +544,9 @@ function pieceExplosion(chessPiece) {
             else chessPiece.style.backgroundColor = "red"; 
         }
         timer++;
-        
-    }
-    revertColors();
+    } //FIXME: Tile stays secondary color after animation and doesn't revert
+    //The issue is that the animation (due to the nature of setInterval) continues after all the code is finished running, so any code that frees up the space appearance gets overridden
+    //Clearing the interval and then calling resetBoard or availableMove works, but causes animation to end instantly.
+
+    avaliableMove(chessPiece);
 }
