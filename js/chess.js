@@ -180,9 +180,13 @@ board.addEventListener("click", function(event) {
 
         //Blow up if goes to mine
         if (bombs.includes(event.target.id)){
+
+            pieceExplosion(oldSelected);
+
             //If King blows up
             if (oldSelected.textContent == pieces[5][0]) {alert("Black Wins!!!"); gameOver = true;}
             if (oldSelected.textContent == pieces[5][1]) {alert("White Wins!!!"); gameOver = true;}
+
 
             oldSelected.textContent = "";
             let index = bombs.findIndex(spot => mine(spot, event.target.id));
@@ -460,7 +464,6 @@ function revertColors() {
     for (let i = 0; i < letters.length; i++) {
         for (let ii = 1; ii < 9;ii++){
             const curr = document.getElementById(ii + letters[i])
-            if (curr.style.backgroundColor == emptyColor ||curr.style.backgroundColor == enemyColor ||curr.style.backgroundColor == clickColor ) {
                 if (mineVis && bombs.includes(curr.id)) {
                     curr.style.backgroundColor = mineColor;
                 }else if (curr.className == "a") {
@@ -468,7 +471,6 @@ function revertColors() {
                 } else {
                     curr.style.backgroundColor = bColor;
                 }
-            }
         }
     }
 }
@@ -529,4 +531,28 @@ function promotePawn(team) {
             default: alert("Invalid Choice!");
         }
     }
+}
+
+
+// ANIMATIONS (Yes I know I should move this to a separate file)
+
+function pieceExplosion(chessPiece) {
+    var id = null;
+    clearInterval(id) //stop any current animations
+    timer = 0;
+    length = 50;
+    id = setInterval(explodeTile, 35); //animate the frame shaking
+    function explodeTile() {
+        //base case
+        if (timer == length) {
+            clearInterval(id);
+            revertColors()
+            
+        } else {
+            if (timer % 2 == 0) chessPiece.style.backgroundColor = "yellow"; 
+            else chessPiece.style.backgroundColor = "red"; 
+        }
+        timer++;
+    } 
+    avaliableMove(chessPiece);
 }
