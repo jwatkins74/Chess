@@ -24,8 +24,12 @@ const clickColor = "chocolate";    // clicked tile color
 const aColor     = "honeydew";     // A tile colors
 const bColor     = "tan";          // B tile colors
 
-const mineProb = 0.2;              //Prob of mine, each center tile
-const mineVis = true;              //For us to test
+//Prob of mine, each center tile
+let mineProb = 0.35;  
+if (localStorage.getItem("diff") >= 0){
+    mineProb = localStorage.getItem("diff") / 100;
+}
+const mineVis = false;              //For us to test
 const mineColor = "red";           //vis mine color
 //------------------------------------------------------------------------------------------------------------------
 //Player
@@ -54,10 +58,8 @@ const viewMines = document.getElementById("viewMines");
 viewMines.onmouseenter =  function(){
     calNumbers()
     mineBoard.style.display = "block";
-    board.style.display = "none";
 };
 viewMines.onmouseleave = function() {
-    board.style.display = "block";
     mineBoard.style.display = "none";
 }
 //Board Swapping
@@ -101,18 +103,18 @@ let flipped = false
 let flipOn = true;
 const flipButton = document.getElementById("flip");
 flipButton.addEventListener("click", function(event) {
-    flipOn = !flipOn;
-    if (flipOn && turn == "black") {
-        flip();
-    } 
+    flipOn = !flipOn; //toggle flip feature
+
     if (flipOn) {
         flipButton.textContent = "Flip is on!"
-    }
-    if (!flipOn) {
-        flipButton.textContent = "Flip is off!"
-    }
+        if (turn == "black") flip();
+        if (turn == "white") ; //do nothing, since it's already fine
 
-    });
+    } else { //when flip is "off", toggle to initial state
+        flipButton.textContent = "Flip is off!"
+        if (flipped) flip();
+    }
+});
     /**
  * Function to flip tiles
  * @param {*} piece Piece to be moved
@@ -178,7 +180,14 @@ board.addEventListener("click", function(event) {
 
         //Blow up if goes to mine
         if (bombs.includes(event.target.id)){
+
             pieceExplosion(oldSelected);
+
+            //If King blows up
+            if (oldSelected.textContent == pieces[5][0]) {alert("Black Wins!!!"); gameOver = true;}
+            if (oldSelected.textContent == pieces[5][1]) {alert("White Wins!!!"); gameOver = true;}
+
+
             oldSelected.textContent = "";
             let index = bombs.findIndex(spot => mine(spot, event.target.id));
             bombs.splice(index, 1);

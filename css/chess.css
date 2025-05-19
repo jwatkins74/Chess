@@ -2,11 +2,33 @@
     background-color: darkcyan;
 }
 
+#board{
+    position: absolute;
+    z-index: 0;
+}
+
+#mineboard{
+    position: absolute;
+    z-index: 1;
+}
+
+#quickSettingBtns {
+    margin-top: 80vh;
+    position: relative;
+
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+
+}
+
 #boardSpace{
     margin-left: auto;
     margin-right: auto;
     display: flex;
     justify-content: center;
+    position: relative;
 }
 
 #turnMessages {

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minesweeper Chess</title>
 
-    <link rel="stylesheet" href ="css/home.css">
-    <script src="js/home.js"></script>
+    <link rel="stylesheet" href ="css/index.css">
+    <script src="js/index.js" defer></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,11 +18,16 @@
         <h1>Minesweeper Chess</h1>
         <h2>Classic chess, but with mines hidden on the board!</h2>
         <img src = "https://media.tenor.com/84kT6EIUo_gAAAAm/nerd.webp">
+        
     </div>
-    
+    <div id = "sliderbox">
+        <p> Difficulty:  </p>
+        <input type = "range" min ="0" max = "100" value ="35" id="slide" > 
+    </div>
     <div class="choices">
         <a href="chess.html"><button id="startGameBtn">Start Game</button></a>
+        
     </div>
-
+    
 </body>
 </html>
