@@ -4,9 +4,6 @@ Later, we could implement Monte Carlo for robot logic, but that's WAY in the fut
 For future note: consider object-oriented approach booo
 
 Thigns to fix/add:
--Centering board
--Pawn Promotions
--Mine Map? Idk if we should have an extra grid for the bombs, as trying to put the minesweeper numbers on the same grid is eww
 -Future- Add one player (Ai will be hard to make), Add online?
 
 */
@@ -92,11 +89,7 @@ function calNumbers() {
             }
         }
     }
-    if (turn == "white") {
-
-    } else {
-
-    }
+    
 }
 //-------------------------------------------------------------------------------------------------------------------
 let flipped = false
@@ -181,7 +174,7 @@ board.addEventListener("click", function(event) {
         //Blow up if goes to mine
         if (bombs.includes(event.target.id)){
 
-            pieceExplosion(oldSelected);
+            pieceExplosion(event.target);
 
             //If King blows up
             if (oldSelected.textContent == pieces[5][0]) {alert("Black Wins!!!"); gameOver = true;}
